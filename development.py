@@ -42,3 +42,16 @@ project_directory/
     - Readonly (True or False, if true then field can't be edited by user)
     - Required (True or False, if true then record can't be saved in database with an empty/null value
     - Default (set value on the field automatically during record creation)
+
+
+#: demo/demo.xml
+    - addining demo data
+
+#: creating new group.
+<odoo>
+    <record id="estate_manager" model="res.groups">
+        <fields name="name">Estate Manager</fields>
+    </record>
+</odoo>
+--------------------> I can create new group for security.
+
