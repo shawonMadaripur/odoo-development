@@ -67,4 +67,55 @@ project_directory/
     - perm_unlink (unlink permission for the access rule)
 
 
+#: Action
+    - open different type of window
+    - open specific data/set of data
+    # Triggered by
+        - clicking on menuitem
+        - clicking on button in views
+        - contextual action on object
 
+
+#: Action
+    - id (external identifier)
+    - model (fixed value of ir.actions.act_window)
+    - name (name of action)
+    - res_model (model which the action applies to)
+    - view_mode (views that will be available{tree,form})
+
+
+#: Fields Attributes
+    - string
+    - readonly
+    - required
+    - default 
+    - domain
+
+
+#: fields attribute in models
+    - active = fields.Boolean(default=True) -----------> (default value set)
+    - state = fields.Selection(
+        [
+            ("new", "New"),
+            ("received", "offer Received"),
+            ("accepted", "offer Accepted"),
+            ("sold", "sold"),
+            ("canceled", "canceled"),
+        ],
+        copy=False
+    )  ----------------> selection field and can't paste duplicate value.
+
+    - def default_date(self):
+        return fields.Date.today()
+    
+    date = fields.Date(default=default_date) ---------> default date value set
+
+
+
+#: Different types of view (model="ir.ui.view")
+    - list
+    - form
+    - search
+    - kanban
+    - pivot
+    - map
