@@ -55,3 +55,16 @@ project_directory/
 </odoo>
 --------------------> I can create new group for security.
 
+
+#: Access Rights
+    - id (external identifier for the access rule)
+    - name (name of the access rule)
+    - model_id:id (ID of the model that the access rule applies to.)
+    - group_id:id (ID of the group that the access rule applies to)
+    - perm_read (read permission for the access rule)
+    - perm_write (write permission for access rule)
+    - perm_create (create permission for the access rule)
+    - perm_unlink (unlink permission for the access rule)
+
+
+
