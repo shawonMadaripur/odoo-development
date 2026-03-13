@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome file</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="basic-compute-display-name-example">Basic Compute Display Name Example</h1>
+<p>Odoo-তে <code>display_name</code> compute করা হয় যখন তুমি চাও <strong>record-এর নাম custom format এ দেখাতে</strong>।</p>
+<p>সাধারণত <code>_rec_name</code> ব্যবহার করলে একটি field দেখায়, কিন্তু <strong>compute display name</strong> ব্যবহার করলে একাধিক field combine করে দেখানো যায়।</p>
+<h2 id="python-model">python model</h2>
+<pre><code>from odoo import models, fields, api
+
+class HospitalManagement(models.Model):
+    _name = 'hospital.management'
+    _description = 'Hospital Management'
+
+    name = fields.Char(string="Patient Name")
+    age = fields.Integer(string="Age")
+
+    display_name = fields.Char(
+        compute="_compute_display_name",
+        store=True
+    )
+
+    @api.depends('name', 'age')
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = f"{rec.name} ({rec.age})"
+</code></pre>
+<h2 id="result">Result</h2>
+<pre><code>যদি data হয়:
+
+Name : John  
+Age  : 30
+
+তাহলে display হবে:
+
+John (30)
+</code></pre>
+<p>যদি কেউ এই মডেল কে ইনহেরিট করে তাহলে সেখানে একই ফরম্যাটে ডাটা দেখাবে।</p>
+</div>
+</body>
+
+</html>
