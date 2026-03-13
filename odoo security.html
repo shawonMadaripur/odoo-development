@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome file</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="odoo-security-system">odoo security system</h1>
+<h2 id="odoo-security-system-4-layer">Odoo Security System (4 Layer)</h2>
+<pre><code>Category  
+↓  
+Group  
+↓  
+Access Control (ir.model.access.csv)  
+↓  
+Record Rule
+</code></pre>
+<h1 id="️⃣-security-category">1️⃣ Security Category</h1>
+<p>Category ব্যবহার করা হয় <strong>group গুলো organize করার জন্য</strong>।</p>
+<p>Example:</p>
+<pre><code>&lt;record  id="module_category_hospital"  model="ir.module.category"&gt;  
+  &lt;field  name="name"&gt;Hospital&lt;/field&gt;  
+&lt;/record&gt;
+</code></pre>
+<p>Result:</p>
+<p>Settings → Users → Groups</p>
+<p>এখানে <strong>Hospital</strong> নামে category দেখাবে।</p>
+<h1 id="️⃣-user-group">2️⃣ User Group</h1>
+<p>Group ব্যবহার করা হয় <strong>user role define করার জন্য</strong>।</p>
+<p>Example:</p>
+<pre><code>Receptionist  
+Doctor  
+Manager
+</code></pre>
+<p>Code:</p>
+<pre><code>&lt;record  id="group_hospital_receptionist"  model="res.groups"&gt;  
+  &lt;field  name="name"&gt;Receptionist&lt;/field&gt;  
+  &lt;field  name="category_id"  ref="school.module_category_hospital"/&gt;  
+&lt;/record&gt;
+</code></pre>
+<p>Result:</p>
+<pre><code>Hospital  
+ ├── Receptionist  
+ ├── Doctor
+</code></pre>
+<p>User কে group assign করা হয়।</p>
+<h1 id="️⃣-access-control-ir.model.access.csv">3️⃣ Access Control (ir.model.access.csv)</h1>
+<pre><code>id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_patient,access_patient,school.model_hospital_management,base.group_user,1,1,1,0
+</code></pre>
+<h1 id="️⃣-record-rule">4️⃣ Record Rule</h1>
+<p>Access control বলে:</p>
+<pre><code>কি করা যাবে
+</code></pre>
+<p>Record rule বলে:</p>
+<pre><code>কোন record করা যাবে
+</code></pre>
+<p>Example:</p>
+<p>Doctor শুধু নিজের patient দেখতে পারবে।</p>
+<pre><code>&lt;record  id="doctor_patient_rule"  model="ir.rule"&gt;  
+  &lt;field  name="name"&gt;Doctor Own Patient&lt;/field&gt;  
+  &lt;field  name="model_id"  ref="school.model_hospital_management"/&gt;  
+  &lt;field  name="domain_force"&gt;[('doctor_id','=',user.id)]&lt;/field&gt;  
+&lt;/record&gt;
+</code></pre>
+<p>Meaning:</p>
+<p>Doctor শুধু <strong>নিজের patient</strong> দেখতে পারবে।</p>
+<h1 id="section"></h1>
+<p>আমরা যে কোডটা দেখছি:</p>
+<pre><code>&lt;field  name="model_id"  ref="school.model_hospital_management"/&gt;  
+&lt;field  name="domain_force"&gt;[('doctor_id','=',user.id)]&lt;/field&gt;
+</code></pre>
+<p>এটা <strong>Odoo Record Rule</strong> এর domain।</p>
+<h1 id="️⃣-doctor_id-কোথা-থেকে-আসে">1️⃣ <code>doctor_id</code> কোথা থেকে আসে?</h1>
+<p><code>doctor_id</code> হলো <strong>model-এর একটি field</strong>।</p>
+<p>Example: তোমার model যদি এমন হয়:</p>
+<pre><code>from  odoo  import  models, fields  
+  
+class  HospitalManagement(models.Model):  
+  _name  =  'hospital.management'  
+  
+  name  =  fields.Char(string="Patient")  
+  
+  doctor_id  =  fields.Many2one(  
+  'res.users',  
+  string="Doctor"  
+ )
+</code></pre>
+<p>এখানে:</p>
+<pre><code>doctor_id = fields.Many2one('res.users')
+</code></pre>
+<p>মানে:</p>
+<pre><code>Patient → Doctor (User)
+</code></pre>
+<p>তাই record rule-এ <code>doctor_id</code> ব্যবহার করা হচ্ছে।</p>
+<h1 id="️⃣-user.id-কোথা-থেকে-আসে">2️⃣ <code>user.id</code> কোথা থেকে আসে?</h1>
+<p><code>user</code> হলো <strong>current logged-in user</strong>।</p>
+<p>Odoo automatically domain-এ <code>user</code> variable দেয়।</p>
+<p>Example:</p>
+<pre><code>user.id
+</code></pre>
+<p>মানে:</p>
+<pre><code>current logged-in user id
+</code></pre>
+<h1 id="️⃣-important-concept">9️⃣ Important Concept</h1>
+<p>Record rule <strong>always model field ব্যবহার করে</strong>।</p>
+<pre><code>domain_force → model fields
+</code></pre>
+<p>তাই:</p>
+<pre><code>doctor_id
+</code></pre>
+<p>model field থেকে এসেছে।</p>
+<h1 id="ami-ki-akhana-doctor-ka-user-hisaba-doraci-or-usergroup.">ami ki akhana doctor ka user hisaba doraci or usergroup.</h1>
+<h2 id="️⃣-user-vs-user-group">1️⃣ User vs User Group</h2>
+<ul>
+<li>
+<p><strong>user</strong>: যেই মানুষটি Odoo তে লগইন করছে। (<code>res.users</code>)</p>
+</li>
+<li>
+<p><strong>user group</strong>: permission বা role assign করার জন্য। উদাহরণ: Doctor, Receptionist, Manager। (<code>res.groups</code>)</p>
+</li>
+</ul>
+<h2 id="️⃣-তুমি-কি-করেছো">2️⃣ তুমি কি করেছো?</h2>
+<pre><code>&lt;record  id="doctor_patient_rule"  model="ir.rule"&gt;  
+  &lt;field  name="name"&gt;Doctor Own Patient&lt;/field&gt;  
+  &lt;field  name="model_id"  ref="school.model_hospital_management"/&gt;  
+  &lt;field  name="domain_force"&gt;[('doctor_id','=',user.id)]&lt;/field&gt;  
+&lt;/record&gt;
+</code></pre>
+<ul>
+<li>
+<p>এটা বলছে: <strong>সব doctor শুধু নিজের patient দেখবে।</strong></p>
+</li>
+<li>
+<p>কিন্তু <strong>যে user এই rule এ apply হবে</strong> সেটা এখন <strong>সব user</strong>। অর্থাৎ, receptionist, manager, সবাই এ rule এ পড়বে।</p>
+</li>
+</ul>
+<h2 id="️⃣-কিভাবে-শুধু-doctor-কে-apply-করা-যায়">3️⃣ কিভাবে শুধু Doctor কে apply করা যায়?</h2>
+<p>তোমাকে rule-এ <strong>groups field</strong> add করতে হবে। যেমন:</p>
+<pre><code>&lt;record  id="doctor_patient_rule"  model="ir.rule"&gt;  
+  &lt;field  name="name"&gt;Doctor Own Patient&lt;/field&gt;  
+  &lt;field  name="model_id"  ref="school.model_hospital_management"/&gt;  
+  &lt;field  name="domain_force"&gt;[('doctor_id','=',user.id)]&lt;/field&gt;  
+  &lt;field  name="groups"  eval="[(4, ref('school.group_hospital_doctors'))]"/&gt;  
+&lt;/record&gt;
+</code></pre>
+<ul>
+<li>
+<p><code>groups</code> field use করলে <strong>rule apply হবে শুধু ওই group-এর users এর উপর।</strong></p>
+</li>
+<li>
+<p><code>school.group_hospital_doctors</code> হলো সেই group যেটা তুমি doctor এর জন্য তৈরি করেছো।</p>
+</li>
+</ul>
+</div>
+</body>
+
+</html>
